@@ -1,0 +1,20 @@
+H:\МДК.01.01 РПМ\Черновики\FB2Reader\FB2Reader\bin\Debug\FB2Reader.exe.config
+H:\МДК.01.01 РПМ\Черновики\FB2Reader\FB2Reader\bin\Debug\FB2Reader.exe
+H:\МДК.01.01 РПМ\Черновики\FB2Reader\FB2Reader\bin\Debug\FB2Reader.pdb
+H:\МДК.01.01 РПМ\Черновики\FB2Reader\FB2Reader\obj\Debug\FB2Reader.csproj.AssemblyReference.cache
+H:\МДК.01.01 РПМ\Черновики\FB2Reader\FB2Reader\obj\Debug\FB2Reader.Properties.Resources.resources
+H:\МДК.01.01 РПМ\Черновики\FB2Reader\FB2Reader\obj\Debug\FB2Reader.csproj.GenerateResource.cache
+H:\МДК.01.01 РПМ\Черновики\FB2Reader\FB2Reader\obj\Debug\FB2Reader.csproj.CoreCompileInputs.cache
+H:\МДК.01.01 РПМ\Черновики\FB2Reader\FB2Reader\obj\Debug\FB2Reader.exe
+H:\МДК.01.01 РПМ\Черновики\FB2Reader\FB2Reader\obj\Debug\FB2Reader.pdb
+H:\МДК.01.01 РПМ\Черновики\FB2Reader — копия\FB2Reader\bin\Debug\FB2Reader.exe.config
+H:\МДК.01.01 РПМ\Черновики\FB2Reader — копия\FB2Reader\bin\Debug\FB2Reader.exe
+H:\МДК.01.01 РПМ\Черновики\FB2Reader — копия\FB2Reader\bin\Debug\FB2Reader.pdb
+H:\МДК.01.01 РПМ\Черновики\FB2Reader — копия\FB2Reader\obj\Debug\FB2Reader.csproj.AssemblyReference.cache
+H:\МДК.01.01 РПМ\Черновики\FB2Reader — копия\FB2Reader\obj\Debug\FB2Reader.Form3.resources
+H:\МДК.01.01 РПМ\Черновики\FB2Reader — копия\FB2Reader\obj\Debug\FB2Reader.Properties.Resources.resources
+H:\МДК.01.01 РПМ\Черновики\FB2Reader — копия\FB2Reader\obj\Debug\FB2Reader.csproj.GenerateResource.cache
+H:\МДК.01.01 РПМ\Черновики\FB2Reader — копия\FB2Reader\obj\Debug\FB2Reader.csproj.CoreCompileInputs.cache
+H:\МДК.01.01 РПМ\Черновики\FB2Reader — копия\FB2Reader\obj\Debug\FB2Reader.exe
+H:\МДК.01.01 РПМ\Черновики\FB2Reader — копия\FB2Reader\obj\Debug\FB2Reader.pdb
+H:\МДК.01.01 РПМ\Черновики\FB2Reader\FB2Reader\obj\Debug\FB2Reader.Form3.resources
