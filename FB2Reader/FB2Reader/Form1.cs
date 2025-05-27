@@ -11,6 +11,7 @@ namespace FB2Reader
     {
         private Button openFileButton;
         private Label statusLabel;
+        private Label bookInfoLabel; // New label to display book information
 
         public Form1()
         {
@@ -21,7 +22,7 @@ namespace FB2Reader
         private void SetupUI()
         {
             this.Text = "FB2 Reader - Выбор файла";
-            this.Size = new System.Drawing.Size(400, 250);
+            this.Size = new System.Drawing.Size(400, 300);
             this.StartPosition = FormStartPosition.CenterScreen;
 
             openFileButton = new Button
@@ -43,6 +44,17 @@ namespace FB2Reader
                 Font = new Font("Segoe UI", 9F),
             };
             this.Controls.Add(statusLabel);
+
+            bookInfoLabel = new Label
+            {
+                Text = "",
+                Location = new System.Drawing.Point(10, statusLabel.Bottom + 20),
+                Size = new System.Drawing.Size(this.ClientSize.Width - 20, 60),
+                TextAlign = ContentAlignment.MiddleCenter,
+                Font = new Font("Segoe UI", 9F),
+                Visible = false // Initially hidden
+            };
+            this.Controls.Add(bookInfoLabel);
         }
 
         private async void OpenFileButton_Click(object sender, EventArgs e)
@@ -69,15 +81,21 @@ namespace FB2Reader
 
                     if (success && book.Chapters.Any() && book.TotalPagesInBook > 0)
                     {
-                        Form3 readerForm = new Form3(book);
+                        Form3 readerForm = new Form3(book, Path.GetFileName(filePath));
                         this.Hide();
                         readerForm.ShowDialog();
-                        this.Close();
+                        if (readerForm.Tag is string bookInfo)
+                        {
+                            bookInfoLabel.Text = bookInfo;
+                            bookInfoLabel.Visible = true;
+                        }
+                        this.Show();
                     }
                     else
                     {
                         statusLabel.Text = "Не удалось загрузить или обработать книгу.\nВозможно, файл поврежден или пуст.";
-                        MessageBox.Show("Не удалось загрузить книгу. Убедитесь, что файл корректен, содержит текст и поддается разбивке на страницы.", "Ошибка загрузки", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("Не удалось загрузить книгу. Убедитесь, что файл корректен, содержит текст и поддается разметке.",
+                            "Ошибка загрузки", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                 }
                 catch (Exception ex)

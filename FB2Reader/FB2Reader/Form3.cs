@@ -17,11 +17,13 @@ namespace FB2Reader
 
         private int _currentChapterIndex = 0;
         private int _currentPageInChapterIndex = 0;
+        private readonly string _fileName; // To store the file name
 
-        public Form3(BookDocument book)
+        public Form3(BookDocument book, string fileName)
         {
             InitializeComponent();
             _book = book;
+            _fileName = fileName;
             _readerPageDimensions = new Size(860, 580);
             SetupUI();
             LoadInitialPage();
@@ -31,17 +33,15 @@ namespace FB2Reader
         private void SetupUI()
         {
             this.Text = "Читалка";
-            // Increased height slightly to accommodate taller panel and controls
-            this.ClientSize = new System.Drawing.Size(800, 730);
+            this.ClientSize = new Size(800, 730);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.WindowState = FormWindowState.Maximized;
 
             readerPanel = new Panel
             {
-                // Location will be set by resize logic to center it
-                Size = _readerPageDimensions, // Use pagination dimensions (e.g., 760, 580)
+                Size = _readerPageDimensions,
                 BorderStyle = BorderStyle.FixedSingle,
-                BackColor = Color.WhiteSmoke // Slightly off-white for better eye comfort
+                BackColor = Color.WhiteSmoke
             };
             this.Controls.Add(readerPanel);
 
@@ -51,27 +51,25 @@ namespace FB2Reader
                 ReadOnly = true,
                 BorderStyle = BorderStyle.None,
                 ScrollBars = RichTextBoxScrollBars.None,
-                Font = new System.Drawing.Font("Segoe UI", 14F), // Increased font size
+                Font = new Font("Segoe UI", 14F),
                 WordWrap = true,
-                BackColor = Color.WhiteSmoke // Match panel
+                BackColor = Color.WhiteSmoke
             };
             readerPanel.Controls.Add(richTextBoxDisplay);
 
-            readerPanel.Anchor = AnchorStyles.None; // Center panel on resize
-
-            prevButton = new Button { Text = "<", Size = new System.Drawing.Size(70, 35), Font = new Font("Segoe UI", 11F, FontStyle.Bold) };
+            prevButton = new Button { Text = "<", Size = new Size(70, 35), Font = new Font("Segoe UI", 11F, FontStyle.Bold) };
             prevButton.Click += PrevButton_Click;
             this.Controls.Add(prevButton);
 
-            tocButton = new Button { Text = "Оглавление", Size = new System.Drawing.Size(130, 35), Font = new Font("Segoe UI", 11F) };
+            tocButton = new Button { Text = "Оглавление", Size = new Size(130, 35), Font = new Font("Segoe UI", 11F) };
             tocButton.Click += TocButton_Click;
             this.Controls.Add(tocButton);
 
-            nextButton = new Button { Text = ">", Size = new System.Drawing.Size(70, 35), Font = new Font("Segoe UI", 11F, FontStyle.Bold) };
+            nextButton = new Button { Text = ">", Size = new Size(70, 35), Font = new Font("Segoe UI", 11F, FontStyle.Bold) };
             nextButton.Click += NextButton_Click;
             this.Controls.Add(nextButton);
 
-            pageInfoLabel = new Label { Text = "1 / 1", AutoSize = false, TextAlign = ContentAlignment.MiddleRight, Size = new System.Drawing.Size(130, 30), Font = new Font("Segoe UI", 11F) };
+            pageInfoLabel = new Label { Text = "1 / 1", AutoSize = false, TextAlign = ContentAlignment.MiddleRight, Size = new Size(130, 30), Font = new Font("Segoe UI", 11F) };
             this.Controls.Add(pageInfoLabel);
 
             pageTrackBar = new TrackBar
@@ -80,53 +78,36 @@ namespace FB2Reader
                 Maximum = Math.Max(1, _book.TotalPagesInBook),
                 Value = 1,
                 TickFrequency = Math.Max(1, _book.TotalPagesInBook / 20),
-                AutoSize = false, // Allow setting height
-                Height = 45,
+                AutoSize = false,
+                Height = 45
             };
             pageTrackBar.Scroll += PageTrackBar_Scroll;
             this.Controls.Add(pageTrackBar);
 
-            this.Resize += Form3_Resize; // Add resize event handler
-            Form3_Resize(this, EventArgs.Empty); // Call initially to set positions
+            this.Resize += Form3_Resize;
+            Form3_Resize(this, EventArgs.Empty);
         }
 
         private void Form3_Resize(object sender, EventArgs e)
         {
-            // Center the readerPanel
-            readerPanel.Location = new Point(
-                (this.ClientSize.Width - readerPanel.Width) / 2,
-                20 // Top margin
-            );
-
-            // Position controls below the readerPanel
+            readerPanel.Location = new Point((this.ClientSize.Width - readerPanel.Width) / 2, 20);
             int controlsY = readerPanel.Bottom + 20;
-            int availableWidthForControls = this.ClientSize.Width - 40; // 20px margin each side
 
             prevButton.Location = new Point(readerPanel.Left, controlsY);
-
-            // Center TOC button between prev and next
-            tocButton.Location = new Point(
-                prevButton.Right + (((readerPanel.Right - prevButton.Right - nextButton.Width) - tocButton.Width) / 2),
-                controlsY
-            );
-            if (tocButton.Left <= prevButton.Right) tocButton.Left = prevButton.Right + 5; // Ensure no overlap
-
+            tocButton.Location = new Point((this.ClientSize.Width - tocButton.Width) / 2, controlsY);
             nextButton.Location = new Point(readerPanel.Right - nextButton.Width, controlsY);
-            if (tocButton.Right >= nextButton.Left) tocButton.Left = nextButton.Left - tocButton.Width - 5; // Ensure no overlap
 
-            int trackBarY = controlsY + prevButton.Height + 15;
-            pageTrackBar.Location = new Point(readerPanel.Left, trackBarY);
+            pageTrackBar.Location = new Point(readerPanel.Left, controlsY + prevButton.Height + 15);
             pageTrackBar.Width = readerPanel.Width - pageInfoLabel.Width - 10;
 
-            pageInfoLabel.Location = new Point(pageTrackBar.Right + 5, trackBarY + (pageTrackBar.Height - pageInfoLabel.Height) / 2);
+            pageInfoLabel.Location = new Point(pageTrackBar.Right + 5, pageTrackBar.Top + (pageTrackBar.Height - pageInfoLabel.Height) / 2);
         }
-
 
         private void LoadInitialPage()
         {
             _currentChapterIndex = 0;
             _currentPageInChapterIndex = 0;
-            if (_book.TotalPagesInBook == 0) // Handle case of empty book or failed pagination
+            if (_book.TotalPagesInBook == 0)
             {
                 richTextBoxDisplay.Text = "Не удалось загрузить страницы книги.";
                 pageInfoLabel.Text = "0 / 0";
@@ -147,13 +128,12 @@ namespace FB2Reader
                 return;
             }
 
-            // Validate indices
             if (_currentChapterIndex < 0 || _currentChapterIndex >= _book.Chapters.Count) _currentChapterIndex = 0;
             BookChapter chapter = _book.Chapters[_currentChapterIndex];
-            if (!chapter.PagesRtf.Any()) // Chapter has no pages (should ideally not happen if pagination adds empty page)
+            if (!chapter.PagesRtf.Any())
             {
                 richTextBoxDisplay.Text = $"В главе \"{chapter.Title}\" нет страниц.";
-                UpdateNavigationState(); // Still update nav for context
+                UpdateNavigationState();
                 return;
             }
             if (_currentPageInChapterIndex < 0 || _currentPageInChapterIndex >= chapter.PagesRtf.Count) _currentPageInChapterIndex = 0;
@@ -175,24 +155,33 @@ namespace FB2Reader
             if (_book.TotalPagesInBook == 0) return;
 
             int absolutePageNumber = _book.GetAbsolutePageNumber(_currentChapterIndex, _currentPageInChapterIndex);
-            if (pageTrackBar.Maximum != _book.TotalPagesInBook) pageTrackBar.Maximum = Math.Max(1, _book.TotalPagesInBook);
-            pageTrackBar.Value = Math.Min(pageTrackBar.Maximum, Math.Max(pageTrackBar.Minimum, absolutePageNumber));
+            pageTrackBar.Maximum = Math.Max(1, _book.TotalPagesInBook);
+            pageTrackBar.Value = absolutePageNumber;
             pageInfoLabel.Text = $"{absolutePageNumber} / {_book.TotalPagesInBook}";
 
             this.Text = $"Читалка - {_book.Chapters[_currentChapterIndex].Title} (Стр. {_currentPageInChapterIndex + 1} из {_book.Chapters[_currentChapterIndex].PagesRtf.Count})";
 
-            prevButton.Enabled = !(absolutePageNumber == 1);
-            nextButton.Enabled = !(absolutePageNumber == _book.TotalPagesInBook);
+            prevButton.Enabled = absolutePageNumber > 1;
+            nextButton.Enabled = absolutePageNumber < _book.TotalPagesInBook;
+        }
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            base.OnFormClosing(e);
+            int currentPage = _book.GetAbsolutePageNumber(_currentChapterIndex, _currentPageInChapterIndex);
+            string bookInfo = $"Файл: {_fileName}\nГлава: {_currentChapterIndex + 1}\nСтраница: {currentPage}";
+            this.Tag = bookInfo;
         }
 
         private void PrevButton_Click(object sender, EventArgs e) => NavigatePrevious();
+
         private void NextButton_Click(object sender, EventArgs e) => NavigateNext();
 
         private void NavigatePrevious()
         {
             if (_book.TotalPagesInBook == 0) return;
             int absolutePageNumber = _book.GetAbsolutePageNumber(_currentChapterIndex, _currentPageInChapterIndex);
-            if (absolutePageNumber == 1) return; // Already at the very first page
+            if (absolutePageNumber == 1) return;
 
             if (_currentPageInChapterIndex > 0)
             {
@@ -253,21 +242,6 @@ namespace FB2Reader
             _currentChapterIndex = chapIdx;
             _currentPageInChapterIndex = pageInChapIdx;
             DisplayCurrentPage();
-        }
-
-        protected override void OnKeyDown(KeyEventArgs e)
-        {
-            base.OnKeyDown(e);
-            if (e.KeyCode == Keys.Left)
-            {
-                NavigatePrevious();
-                e.Handled = true;
-            }
-            else if (e.KeyCode == Keys.Right)
-            {
-                NavigateNext();
-                e.Handled = true;
-            }
         }
     }
 }
